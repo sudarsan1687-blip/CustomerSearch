@@ -18,16 +18,29 @@ import { Subscription } from 'rxjs';
     <div class="map-view">
       <header class="toolbar">
         <div class="toolbar-left">
-          <h1>Customer Search</h1>
+          <div class="logo">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+            <h1>Customer Map</h1>
+          </div>
         </div>
         <div class="toolbar-right">
           @if (config()) {
-            <button class="toolbar-btn" (click)="refreshData()" [disabled]="loading()">
+            <button class="toolbar-btn refresh-btn" (click)="refreshData()" [disabled]="loading()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" [class.spinning]="loading()">
+                <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+              </svg>
               {{ loading() ? 'Loading...' : 'Refresh' }}
             </button>
           }
-          <button class="toolbar-btn" (click)="showConfig.set(true)">
-            Config
+          <button class="toolbar-btn config-btn" (click)="showConfig.set(true)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+            Settings
           </button>
         </div>
       </header>
@@ -65,39 +78,71 @@ import { Subscription } from 'rxjs';
       display: flex;
       flex-direction: column;
       height: 100vh;
+      background: var(--bg-color);
     }
     .toolbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 10px 20px;
-      background: #1976d2;
-      color: white;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      padding: 12px 24px;
+      background: var(--surface-color);
+      border-bottom: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
     }
-    .toolbar h1 {
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--primary-color);
+    }
+    .logo h1 {
       margin: 0;
       font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-primary);
     }
     .toolbar-right {
       display: flex;
-      gap: 10px;
+      gap: 12px;
     }
     .toolbar-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
       padding: 8px 16px;
       border: none;
-      border-radius: 4px;
-      background: rgba(255,255,255,0.2);
-      color: white;
+      border-radius: 8px;
       cursor: pointer;
       font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
     }
-    .toolbar-btn:hover {
-      background: rgba(255,255,255,0.3);
+    .refresh-btn {
+      background: var(--primary-light);
+      color: var(--primary-color);
     }
-    .toolbar-btn:disabled {
-      opacity: 0.5;
+    .refresh-btn:hover {
+      background: #bfdbfe;
+    }
+    .refresh-btn:disabled {
+      opacity: 0.6;
       cursor: not-allowed;
+    }
+    .config-btn {
+      background: var(--surface-color);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-color);
+    }
+    .config-btn:hover {
+      background: var(--bg-color);
+      border-color: var(--text-muted);
+    }
+    .spinning {
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
     }
     .main-content {
       display: flex;
@@ -105,13 +150,15 @@ import { Subscription } from 'rxjs';
       overflow: hidden;
     }
     .sidebar {
-      width: 350px;
-      border-right: 1px solid #e0e0e0;
+      width: 380px;
+      background: var(--surface-color);
+      border-right: 1px solid var(--border-color);
       overflow: hidden;
     }
     .map-container {
       flex: 1;
       position: relative;
+      background: #e5e7eb;
     }
     .map {
       width: 100%;
@@ -148,6 +195,7 @@ export class MapViewComponent {
 
   private map: L.Map | null = null;
   private markers: Map<string, L.CircleMarker> = new Map();
+  private markersLayer: L.LayerGroup | null = null;
   private geoSub?: Subscription;
 
   constructor() {
@@ -170,11 +218,24 @@ export class MapViewComponent {
   }
 
   private initMap() {
-    this.map = L.map(this.mapElement.nativeElement).setView([20, 0], 2);
+    this.map = L.map(this.mapElement.nativeElement, {
+      zoomControl: false
+    }).setView([20, 0], 2);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors'
+    // Add zoom control to top right
+    L.control.zoom({
+      position: 'topright'
     }).addTo(this.map);
+
+    // Use CartoDB Positron - professional, clean, free tiles
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      subdomains: 'abcd',
+      maxZoom: 20
+    }).addTo(this.map);
+
+    // Create a layer group for markers
+    this.markersLayer = L.layerGroup().addTo(this.map);
   }
 
   refreshData() {
@@ -214,6 +275,9 @@ export class MapViewComponent {
   private startGeocoding(customers: Customer[]) {
     this.geoSub?.unsubscribe();
 
+    // Track geocoded customers to fit bounds later
+    const geocodedCustomers: Customer[] = [];
+
     this.geoSub = this.geocodingService.geocodeCustomers(customers)
       .subscribe({
         next: (updated) => {
@@ -226,6 +290,10 @@ export class MapViewComponent {
 
             if (updated.geocodeStatus === 'success' && updated.lat && updated.lng) {
               this.addMarker(updated);
+              geocodedCustomers.push(updated);
+
+              // Fit bounds to show all markers
+              this.fitBoundsToMarkers();
             }
           }
         },
@@ -236,22 +304,27 @@ export class MapViewComponent {
   }
 
   private addMarker(customer: Customer) {
-    if (!this.map || !customer.lat || !customer.lng) return;
+    if (!this.map || !customer.lat || !customer.lng || !this.markersLayer) return;
 
     const marker = L.circleMarker([customer.lat, customer.lng], {
-      radius: 8,
-      fillColor: '#1976d2',
-      color: '#fff',
-      weight: 2,
+      radius: 10,
+      fillColor: '#3b82f6',
+      color: '#ffffff',
+      weight: 3,
       opacity: 1,
-      fillOpacity: 0.8
-    }).addTo(this.map);
+      fillOpacity: 0.9
+    }).addTo(this.markersLayer);
 
     marker.bindPopup(`
-      <b>${customer.name}</b><br>
-      ${customer.address}<br>
-      ${customer.country}
-    `);
+      <div style="font-family: Inter, sans-serif; padding: 8px;">
+        <strong style="font-size: 14px; color: #1e293b;">${customer.name}</strong><br>
+        <span style="font-size: 12px; color: #64748b;">${customer.address}</span><br>
+        <span style="font-size: 12px; color: #94a3b8;">${customer.country}</span>
+      </div>
+    `, {
+      closeButton: false,
+      className: 'custom-popup'
+    });
 
     marker.on('click', () => {
       this.selectedCustomer.set(customer);
@@ -265,11 +338,27 @@ export class MapViewComponent {
     this.markers.clear();
   }
 
+  private fitBoundsToMarkers() {
+    if (!this.map || this.markers.size === 0) return;
+
+    const bounds = L.latLngBounds([]);
+    this.markers.forEach((marker) => {
+      bounds.extend(marker.getLatLng());
+    });
+
+    if (bounds.isValid()) {
+      this.map.fitBounds(bounds, {
+        padding: [50, 50],
+        maxZoom: 15
+      });
+    }
+  }
+
   onSelectCustomer(customer: Customer) {
     this.selectedCustomer.set(customer);
 
     if (customer.lat && customer.lng && this.map) {
-      this.map.setView([customer.lat, customer.lng], 14);
+      this.map.setView([customer.lat, customer.lng], 16);
       const marker = this.markers.get(customer.id);
       if (marker) {
         marker.openPopup();
