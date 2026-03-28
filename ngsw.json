@@ -1,0 +1,80 @@
+{
+  "configVersion": 1,
+  "timestamp": 1774694214888,
+  "index": "/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "/favicon.ico",
+        "/index.html",
+        "/main.f9def86a2ac6fce1.js",
+        "/manifest.webmanifest",
+        "/polyfills.eea75a395e011cb9.js",
+        "/runtime.92e9377ad9d5034e.js",
+        "/styles.bcfd1f926722855d.css"
+      ],
+      "patterns": []
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [],
+      "patterns": []
+    }
+  ],
+  "dataGroups": [
+    {
+      "name": "api-calls",
+      "patterns": [
+        "https:\\/\\/sheets\\.googleapis\\.com\\/.*",
+        "https:\\/\\/nominatim\\.openstreetmap\\.org\\/.*"
+      ],
+      "strategy": "freshness",
+      "maxSize": 1000,
+      "maxAge": 3600000,
+      "timeoutMs": 10000,
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "version": 1
+    }
+  ],
+  "hashTable": {
+    "/favicon.ico": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
+    "/index.html": "3a1a47f60e0b6352fe434dde9caa31ed811b64c5",
+    "/main.f9def86a2ac6fce1.js": "28c2d4259e2f542882fe28c382aba80a73dbea35",
+    "/manifest.webmanifest": "33e344afbef7ce33c18cba32afb2fcc364b1d4d6",
+    "/polyfills.eea75a395e011cb9.js": "45071eec7e2f1dbff4b104319ee4c9c44fbc5653",
+    "/runtime.92e9377ad9d5034e.js": "415a99ec195a024c939b619588e474dd2701e0d8",
+    "/styles.bcfd1f926722855d.css": "c8dca96749c4f5100c189ced65e4e362b32b4acf"
+  },
+  "navigationUrls": [
+    {
+      "positive": true,
+      "regex": "^\\/.*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*\\.[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*\\/.*$"
+    }
+  ],
+  "navigationRequestStrategy": "performance"
+}
