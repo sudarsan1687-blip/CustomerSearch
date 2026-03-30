@@ -9,7 +9,7 @@ import { CustomerListComponent } from '../customer-list/customer-list.component'
 import { CustomerDetailComponent } from '../customer-detail/customer-detail.component';
 import { ConfigModalComponent } from '../config-modal/config-modal.component';
 import { Subscription } from 'rxjs';
-import { environment } from '../../environments/environment';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-map-view',
