@@ -49,6 +49,7 @@
                   "maximumError": "4kb"
                 }
               ],
+              "baseHref": "/CustomerSearch/",
               "outputHashing": "all",
               "serviceWorker": true,
               "ngswConfigPath": "ngsw-config.json"
