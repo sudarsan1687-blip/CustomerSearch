@@ -9,6 +9,7 @@ import { CustomerListComponent } from '../customer-list/customer-list.component'
 import { CustomerDetailComponent } from '../customer-detail/customer-detail.component';
 import { ConfigModalComponent } from '../config-modal/config-modal.component';
 import { Subscription } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-map-view',
@@ -199,12 +200,18 @@ export class MapViewComponent {
   private geoSub?: Subscription;
 
   constructor() {
-    // Load saved config
+    // Load saved config or use environment defaults
     const savedConfig = this.cacheService.getConfig();
     if (savedConfig) {
       this.config.set(savedConfig);
       this.loadData();
+    } else if (environment.googleSheetConfig.sheetId && environment.googleSheetConfig.apiKey) {
+      // Use environment config if available
+      this.config.set(environment.googleSheetConfig);
+      this.cacheService.setConfig(environment.googleSheetConfig);
+      this.loadData();
     } else {
+      // No config available, show modal
       this.showConfig.set(true);
     }
   }
