@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Customer } from '../../models/customer.model';
 
@@ -9,22 +9,32 @@ import { Customer } from '../../models/customer.model';
   template: `
     <div class="customer-list">
       <div class="list-header">
-        <h3>Customers <span class="count-badge">{{ customers().length }}</span></h3>
-        <div class="filters">
-          <div class="search-wrapper">
-            <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="11" cy="11" r="8"></circle>
-              <path d="m21 21-4.35-4.35"></path>
+        <div class="header-content">
+          <h3>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
             </svg>
-            <input
-              type="text"
-              placeholder="Search customers..."
-              (input)="onSearch($event)"
-              class="search-input"
-            />
-          </div>
+            Customers
+            <span class="count-badge">{{ filteredCustomers.length }}</span>
+          </h3>
+        </div>
+        <div class="search-wrapper">
+          <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+          <input
+            type="text"
+            placeholder="Search..."
+            (input)="onSearch($event)"
+            class="search-input"
+          />
         </div>
       </div>
+
       <div class="list-container">
         @for (customer of filteredCustomers; track customer.id) {
           <div
@@ -33,59 +43,56 @@ import { Customer } from '../../models/customer.model';
             [class.failed]="customer.geocodeStatus === 'failed'"
             (click)="select.emit(customer)"
           >
-            <div class="card-header">
-              <span class="customer-name">{{ customer.name }}</span>
-              <span class="customer-category">{{ customer.category }}</span>
+            <div class="card-left">
+              <div class="status-dot" [class]="customer.geocodeStatus"></div>
             </div>
-            <div class="card-body">
-              <p class="address" [class.failed-address]="customer.geocodeStatus === 'failed'">
-                {{ customer.address || 'No address provided' }}
-              </p>
-              <div class="location-row">
-                <span class="country">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
-                    <circle cx="12" cy="10" r="3"></circle>
-                  </svg>
-                  {{ customer.country }}
-                </span>
-                @if (customer.distance) {
-                  <span class="distance">{{ customer.distance.toFixed(1) }} km</span>
+            <div class="card-content">
+              <div class="card-header">
+                <span class="customer-name">{{ customer.name }}</span>
+                @if (customer.category) {
+                  <span class="category-tag" [style]="getCategoryColor(customer.category)">
+                    {{ customer.category }}
+                  </span>
                 }
               </div>
+              <div class="card-body">
+                <p class="address">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                  {{ customer.address || 'No address' }}
+                </p>
+                <div class="card-meta">
+                  <span class="country">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="2" y1="12" x2="22" y2="12"></line>
+                    </svg>
+                    {{ customer.country }}
+                  </span>
+                  @if (customer.distance) {
+                    <span class="distance-tag">{{ customer.distance.toFixed(1) }} km</span>
+                  }
+                </div>
+              </div>
             </div>
-            <div class="card-footer">
-              @if (customer.geocodeStatus === 'success') {
-                <span class="status-badge success">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                  </svg>
-                  Mapped
-                </span>
-              } @else if (customer.geocodeStatus === 'failed') {
-                <span class="status-badge failed">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                  </svg>
-                  Not Located
-                </span>
-              } @else {
-                <span class="status-badge pending">
-                  <span class="spinner"></span>
-                  Locating...
-                </span>
-              }
+            <div class="card-arrow">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
             </div>
           </div>
         } @empty {
           <div class="empty-state">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-              <circle cx="11" cy="11" r="8"></circle>
-              <path d="m21 21-4.35-4.35"></path>
-            </svg>
+            <div class="empty-icon">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+              </svg>
+            </div>
             <p>No customers found</p>
-            <span class="empty-hint">Try adjusting your search</span>
+            <span class="empty-hint">Try adjusting your filters</span>
           </div>
         }
       </div>
@@ -96,33 +103,49 @@ import { Customer } from '../../models/customer.model';
       display: flex;
       flex-direction: column;
       height: 100%;
-      background: var(--bg-color);
+      background: transparent;
     }
+
     .list-header {
       padding: 16px;
       background: var(--surface-color);
       border-bottom: 1px solid var(--border-color);
     }
-    .list-header h3 {
-      margin: 0 0 12px 0;
-      font-size: 0.875rem;
-      font-weight: 600;
-      color: var(--text-primary);
+
+    .header-content {
       display: flex;
       align-items: center;
-      gap: 8px;
+      justify-content: space-between;
+      margin-bottom: 12px;
     }
-    .count-badge {
-      background: var(--primary-light);
+
+    .header-content h3 {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .header-content svg {
       color: var(--primary-color);
+    }
+
+    .count-badge {
+      background: var(--primary-gradient);
+      color: white;
       padding: 2px 8px;
       border-radius: 12px;
       font-size: 0.75rem;
       font-weight: 600;
     }
+
     .search-wrapper {
       position: relative;
     }
+
     .search-icon {
       position: absolute;
       left: 12px;
@@ -130,97 +153,178 @@ import { Customer } from '../../models/customer.model';
       transform: translateY(-50%);
       color: var(--text-muted);
     }
+
     .search-input {
       width: 100%;
       padding: 10px 12px 10px 36px;
       border: 1px solid var(--border-color);
-      border-radius: 8px;
-      font-size: 14px;
-      background: var(--surface-color);
+      border-radius: 10px;
+      font-size: 0.875rem;
+      background: var(--bg-color);
       color: var(--text-primary);
       box-sizing: border-box;
       transition: all 0.2s;
     }
+
     .search-input:focus {
       outline: none;
       border-color: var(--primary-color);
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      box-shadow: 0 0 0 3px var(--primary-light);
     }
-    .search-input::placeholder {
-      color: var(--text-muted);
-    }
+
     .list-container {
       flex: 1;
       overflow-y: auto;
       padding: 12px;
     }
+
     .customer-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
       background: var(--surface-color);
       border-radius: 12px;
       padding: 14px;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       border: 1px solid var(--border-color);
-      border-left: 3px solid transparent;
+      position: relative;
+      overflow: hidden;
     }
+
+    .customer-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--primary-gradient);
+      transform: scaleX(0);
+      transition: transform 0.25s ease;
+    }
+
+    .customer-card:hover::before {
+      transform: scaleX(1);
+    }
+
     .customer-card:hover {
+      transform: translateX(4px);
       box-shadow: var(--shadow-md);
-      transform: translateY(-1px);
+      border-color: var(--primary-light);
     }
+
     .customer-card.active {
       border-color: var(--primary-color);
-      border-left-color: var(--primary-color);
-      box-shadow: var(--shadow-md);
+      box-shadow: var(--shadow-lg);
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), var(--surface-color));
     }
+
+    .customer-card.active::before {
+      transform: scaleX(1);
+    }
+
     .customer-card.failed {
-      border-left-color: var(--error-color);
-      background: linear-gradient(to right, rgba(239, 68, 68, 0.03), var(--surface-color));
+      border-left: 3px solid var(--error-color);
+      background: linear-gradient(to right, rgba(255, 82, 82, 0.05), var(--surface-color));
     }
+
+    .card-left {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 2px;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .status-dot.success {
+      background: var(--success-gradient);
+      box-shadow: 0 0 8px rgba(0, 200, 83, 0.4);
+    }
+
+    .status-dot.pending {
+      background: var(--warning-gradient);
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    .status-dot.failed {
+      background: var(--error-gradient);
+      box-shadow: 0 0 8px rgba(255, 82, 82, 0.4);
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.1); }
+    }
+
+    .card-content {
+      flex: 1;
+      min-width: 0;
+    }
+
     .card-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 8px;
+      gap: 8px;
     }
+
     .customer-name {
       font-weight: 600;
       font-size: 0.9375rem;
       color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-    .customer-category {
-      font-size: 0.75rem;
+
+    .category-tag {
+      font-size: 0.6875rem;
+      font-weight: 600;
       padding: 3px 8px;
-      background: var(--primary-light);
-      color: var(--primary-color);
       border-radius: 6px;
-      font-weight: 500;
+      white-space: nowrap;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
     }
+
     .card-body {
-      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
     }
-    .card-body p {
-      margin: 0 0 6px 0;
+
+    .address {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      margin: 0;
       font-size: 0.8125rem;
       color: var(--text-secondary);
       line-height: 1.5;
     }
-    .address {
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+
+    .address svg {
+      flex-shrink: 0;
+      margin-top: 2px;
+      color: var(--text-muted);
     }
-    .failed-address {
-      color: var(--error-color) !important;
-      font-weight: 500;
-    }
-    .location-row {
+
+    .card-meta {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 8px;
     }
+
     .country {
       display: flex;
       align-items: center;
@@ -228,56 +332,40 @@ import { Customer } from '../../models/customer.model';
       font-size: 0.75rem;
       color: var(--text-muted);
     }
+
     .country svg {
       flex-shrink: 0;
     }
-    .distance {
-      display: inline-flex;
-      align-items: center;
-      font-size: 0.75rem;
+
+    .distance-tag {
+      font-size: 0.6875rem;
+      font-weight: 600;
       padding: 3px 8px;
       background: var(--success-bg);
       color: var(--success-color);
       border-radius: 6px;
-      font-weight: 500;
-      flex-shrink: 0;
     }
-    .card-footer {
+
+    .card-arrow {
       display: flex;
-      justify-content: flex-end;
-    }
-    .status-badge {
-      display: inline-flex;
       align-items: center;
-      gap: 4px;
-      font-size: 0.75rem;
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-weight: 500;
+      color: var(--text-muted);
+      opacity: 0;
+      transform: translateX(-4px);
+      transition: all 0.2s;
     }
-    .status-badge.success {
-      background: var(--success-bg);
-      color: var(--success-color);
+
+    .customer-card:hover .card-arrow {
+      opacity: 1;
+      transform: translateX(0);
     }
-    .status-badge.failed {
-      background: var(--error-bg);
-      color: var(--error-color);
+
+    .customer-card.active .card-arrow {
+      opacity: 1;
+      transform: translateX(0);
+      color: var(--primary-color);
     }
-    .status-badge.pending {
-      background: #fef3c7;
-      color: #d97706;
-    }
-    .spinner {
-      width: 10px;
-      height: 10px;
-      border: 2px solid #d97706;
-      border-top-color: transparent;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+
     .empty-state {
       display: flex;
       flex-direction: column;
@@ -285,16 +373,29 @@ import { Customer } from '../../models/customer.model';
       justify-content: center;
       padding: 48px 24px;
       color: var(--text-muted);
+      text-align: center;
     }
-    .empty-state svg {
-      margin-bottom: 12px;
+
+    .empty-icon {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 16px;
+      background: var(--primary-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary-color);
       opacity: 0.5;
     }
+
     .empty-state p {
       margin: 0 0 4px 0;
       font-size: 0.9375rem;
       color: var(--text-secondary);
+      font-weight: 500;
     }
+
     .empty-hint {
       font-size: 0.8125rem;
       opacity: 0.8;
@@ -309,6 +410,17 @@ export class CustomerListComponent {
 
   filteredCustomers: Customer[] = [];
   private searchTerm = '';
+
+  // Category colors map
+  private categoryColors: Map<string, string> = new Map([
+    ['Automotive', 'background: #fee2e2; color: #dc2626;'],
+    ['Retail', 'background: #dbeafe; color: #2563eb;'],
+    ['Manufacturing', 'background: #e0e7ff; color: #4f46e5;'],
+    ['Healthcare', 'background: #d1fae5; color: #059669;'],
+    ['Technology', 'background: #f3e8ff; color: #7c3aed;'],
+    ['Food', 'background: #fef3c7; color: #d97706;'],
+    ['Services', 'background: #fce7f3; color: #db2777;'],
+  ]);
 
   ngOnInit() {
     this.filterCustomers();
@@ -332,7 +444,12 @@ export class CustomerListComponent {
     this.filteredCustomers = customers.filter(c =>
       c.name.toLowerCase().includes(this.searchTerm) ||
       c.address.toLowerCase().includes(this.searchTerm) ||
-      c.country.toLowerCase().includes(this.searchTerm)
+      c.country.toLowerCase().includes(this.searchTerm) ||
+      c.category.toLowerCase().includes(this.searchTerm)
     );
+  }
+
+  getCategoryColor(category: string): string {
+    return this.categoryColors.get(category) || 'background: #f1f5f9; color: #64748b;';
   }
 }
