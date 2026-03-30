@@ -71,9 +71,29 @@ import { environment } from '../../../environments/environment';
         </div>
       </header>
 
-      <!-- Main Content - 3 Column Layout: Left=Detail, Center=Map, Right=List+Filters -->
+      <!-- Main Content - 3 Column Layout: Left=List, Center=Map, Right=Detail+Filters -->
       <div class="main-layout">
-        <!-- Left: Customer Details -->
+        <!-- Left: Customer List -->
+        <div class="list-section">
+          <app-filter-panel
+            [customers]="customers()"
+            (filterChange)="onFilterChange($event)"
+          />
+          <app-customer-list
+            [customers]="filteredCustomers()"
+            [selectedCustomer]="selectedCustomer()"
+            (select)="onSelectCustomer($event)"
+          />
+        </div>
+
+        <!-- Center: Map -->
+        <div class="map-section">
+          <div class="map-wrapper">
+            <div #map class="map"></div>
+          </div>
+        </div>
+
+        <!-- Right: Customer Details -->
         <div class="detail-section">
           @if (selectedCustomer()) {
             <app-customer-detail
@@ -92,26 +112,6 @@ import { environment } from '../../../environments/environment';
               <p>Click on a customer from the list or map to view their details</p>
             </div>
           }
-        </div>
-
-        <!-- Center: Map -->
-        <div class="map-section">
-          <div class="map-wrapper">
-            <div #map class="map"></div>
-          </div>
-        </div>
-
-        <!-- Right: List with Filters -->
-        <div class="list-section">
-          <app-filter-panel
-            [customers]="customers()"
-            (filterChange)="onFilterChange($event)"
-          />
-          <app-customer-list
-            [customers]="filteredCustomers()"
-            [selectedCustomer]="selectedCustomer()"
-            (select)="onSelectCustomer($event)"
-          />
         </div>
       </div>
 
@@ -286,7 +286,7 @@ import { environment } from '../../../environments/environment';
       color: var(--text-primary);
     }
 
-    /* Main Layout - 3 Columns: Left=Detail, Center=Map, Right=List */
+    /* Main Layout - 3 Columns: Left=List, Center=Map, Right=Detail */
     .main-layout {
       display: flex;
       flex: 1;
@@ -295,13 +295,12 @@ import { environment } from '../../../environments/environment';
       background: var(--border-color);
     }
 
-    /* Left: Detail Section */
-    .detail-section {
-      width: 400px;
-      background: var(--surface-color);
+    /* Left: List Section */
+    .list-section {
+      width: 420px;
+      background: var(--bg-color);
       border-right: 1px solid var(--border-color);
       overflow: hidden;
-      position: relative;
       display: flex;
       flex-direction: column;
     }
@@ -325,6 +324,17 @@ import { environment } from '../../../environments/environment';
       width: 100%;
       height: 100%;
       background: linear-gradient(135deg, #aadaff 0%, #d4f1f4 100%);
+    }
+
+    /* Right: Detail Section */
+    .detail-section {
+      width: 400px;
+      background: var(--surface-color);
+      border-left: 1px solid var(--border-color);
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
     }
 
     .empty-state {
