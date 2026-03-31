@@ -71,14 +71,10 @@ import { environment } from '../../../environments/environment';
         </div>
       </header>
 
-      <!-- Main Content - 3 Column Layout: Left=List, Center=Map, Right=Detail+Filters -->
+      <!-- Main Content - 3 Column Layout: Left=List, Center=Map, Right=Filters+Detail -->
       <div class="main-layout">
-        <!-- Left: Customer List -->
+        <!-- Left: Customer List Only -->
         <div class="list-section">
-          <app-filter-panel
-            [customers]="customers()"
-            (filterChange)="onFilterChange($event)"
-          />
           <app-customer-list
             [customers]="filteredCustomers()"
             [selectedCustomer]="selectedCustomer()"
@@ -93,25 +89,33 @@ import { environment } from '../../../environments/environment';
           </div>
         </div>
 
-        <!-- Right: Customer Details -->
-        <div class="detail-section">
-          @if (selectedCustomer()) {
-            <app-customer-detail
-              [customer]="selectedCustomer()!"
-              (close)="selectedCustomer.set(null)"
+        <!-- Right: Filters + Customer Details -->
+        <div class="right-panel">
+          <div class="filter-container">
+            <app-filter-panel
+              [customers]="customers()"
+              (filterChange)="onFilterChange($event)"
             />
-          } @else {
-            <div class="empty-state">
-              <div class="empty-icon">
-                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="12" cy="7" r="4"></circle>
-                </svg>
+          </div>
+          <div class="detail-container">
+            @if (selectedCustomer()) {
+              <app-customer-detail
+                [customer]="selectedCustomer()!"
+                (close)="selectedCustomer.set(null)"
+              />
+            } @else {
+              <div class="empty-state">
+                <div class="empty-icon">
+                  <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                </div>
+                <h3>Select a Customer</h3>
+                <p>Click on a customer from the list or map to view their details</p>
               </div>
-              <h3>Select a Customer</h3>
-              <p>Click on a customer from the list or map to view their details</p>
-            </div>
-          }
+            }
+          </div>
         </div>
       </div>
 
@@ -286,7 +290,7 @@ import { environment } from '../../../environments/environment';
       color: var(--text-primary);
     }
 
-    /* Main Layout - 3 Columns: Left=List, Center=Map, Right=Detail */
+    /* Main Layout - 3 Columns: Left=List, Center=Map, Right=Filters+Detail */
     .main-layout {
       display: flex;
       flex: 1;
@@ -295,10 +299,10 @@ import { environment } from '../../../environments/environment';
       background: var(--border-color);
     }
 
-    /* Left: List Section */
+    /* Left: Customer List Only */
     .list-section {
-      width: 420px;
-      background: var(--bg-color);
+      width: 400px;
+      background: var(--surface-color);
       border-right: 1px solid var(--border-color);
       overflow: hidden;
       display: flex;
@@ -326,15 +330,27 @@ import { environment } from '../../../environments/environment';
       background: linear-gradient(135deg, #aadaff 0%, #d4f1f4 100%);
     }
 
-    /* Right: Detail Section */
-    .detail-section {
-      width: 400px;
-      background: var(--surface-color);
+    /* Right Panel: Filters + Details */
+    .right-panel {
+      width: 420px;
+      background: var(--bg-color);
       border-left: 1px solid var(--border-color);
       overflow: hidden;
-      position: relative;
       display: flex;
       flex-direction: column;
+    }
+
+    .filter-container {
+      flex-shrink: 0;
+      padding: 12px;
+      background: var(--bg-color);
+    }
+
+    .detail-container {
+      flex: 1;
+      overflow-y: auto;
+      background: var(--surface-color);
+      border-top: 1px solid var(--border-color);
     }
 
     .empty-state {

@@ -35,6 +35,16 @@ import { Customer } from '../../models/customer.model';
         </div>
       </div>
 
+      <!-- Scroll indicator -->
+      @if (filteredCustomers.length > 5) {
+        <div class="scroll-indicator">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 5v14M19 12l-7 7-7-7"/>
+          </svg>
+          <span>Scroll for more</span>
+        </div>
+      }
+
       <div class="list-container">
         @for (customer of filteredCustomers; track customer.id) {
           <div
@@ -103,20 +113,69 @@ import { Customer } from '../../models/customer.model';
       display: flex;
       flex-direction: column;
       height: 100%;
-      background: transparent;
+      background: var(--surface-color);
     }
 
     .list-header {
       padding: 16px;
-      background: var(--surface-color);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       border-bottom: 1px solid var(--border-color);
+      flex-shrink: 0;
+    }
+
+    .header-content h3 {
+      color: white !important;
+    }
+
+    .header-content svg {
+      color: rgba(255, 255, 255, 0.9) !important;
+    }
+
+    .count-badge {
+      background: rgba(255, 255, 255, 0.25);
+      color: white;
+    }
+
+    .search-input {
+      background: rgba(255, 255, 255, 0.95);
+      color: var(--text-primary);
+    }
+
+    .search-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .search-icon {
+      color: var(--text-muted);
+    }
+
+    /* Scroll Indicator */
+    .scroll-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px;
+      background: linear-gradient(to bottom, var(--surface-color), transparent);
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      font-weight: 500;
+      animation: bounce 1.5s ease-in-out infinite;
+    }
+
+    .scroll-indicator svg {
+      color: var(--primary-color);
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(3px); }
     }
 
     .header-content {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 12px;
     }
 
     .header-content h3 {
@@ -126,20 +185,10 @@ import { Customer } from '../../models/customer.model';
       margin: 0;
       font-size: 0.9375rem;
       font-weight: 600;
-      color: var(--text-primary);
     }
 
     .header-content svg {
-      color: var(--primary-color);
-    }
-
-    .count-badge {
-      background: var(--primary-gradient);
-      color: white;
-      padding: 2px 8px;
-      border-radius: 12px;
-      font-size: 0.75rem;
-      font-weight: 600;
+      flex-shrink: 0;
     }
 
     .search-wrapper {
