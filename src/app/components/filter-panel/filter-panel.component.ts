@@ -9,24 +9,6 @@ import { Customer } from '../../models/customer.model';
   imports: [CommonModule, FormsModule],
   template: `
     <div class="filter-panel">
-      <div class="filter-header">
-        <h3>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
-          </svg>
-          Filters
-        </h3>
-        @if (hasActiveFilters()) {
-          <button class="clear-btn" (click)="clearFilters()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-            Clear
-          </button>
-        }
-      </div>
-
       <div class="filter-body">
         <!-- Category Filter -->
         <div class="filter-group">
@@ -149,90 +131,66 @@ import { Customer } from '../../models/customer.model';
   `,
   styles: [`
     .filter-panel {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      padding: 10px 16px;
-      border-radius: 0;
+      background: transparent;
+      padding: 0;
       margin: 0;
-      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.2);
-    }
-    .filter-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-    .filter-header h3 {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: white;
-      margin: 0;
-    }
-    .filter-header svg {
-      color: rgba(255, 255, 255, 0.9);
+      box-shadow: none;
     }
     .filter-body {
       display: flex;
       flex-direction: row;
-      gap: 16px;
-      align-items: flex-end;
+      gap: 12px;
+      align-items: center;
     }
     .filter-group {
       display: flex;
       flex-direction: column;
       gap: 4px;
-      flex: 1;
-      min-width: 120px;
+      min-width: 100px;
     }
     .filter-label {
       display: flex;
       align-items: center;
-      gap: 6px;
-      font-size: 0.6875rem;
+      gap: 4px;
+      font-size: 0.625rem;
       font-weight: 600;
-      color: rgba(255, 255, 255, 0.9);
+      color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.03em;
     }
     .filter-label svg {
-      color: rgba(255, 255, 255, 0.7);
+      color: var(--primary-color);
     }
     .filter-select {
-      padding: 8px 12px;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.15);
-      color: white;
-      font-size: 0.8125rem;
+      padding: 6px 10px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      background: var(--surface-color);
+      color: var(--text-primary);
+      font-size: 0.75rem;
       cursor: pointer;
       transition: all 0.2s;
-      backdrop-filter: blur(10px);
-    }
-    .filter-select option {
-      background: #667eea;
-      color: white;
     }
     .filter-select:hover {
-      background: rgba(255, 255, 255, 0.2);
+      border-color: var(--primary-color);
     }
     .filter-select:focus {
       outline: none;
-      border-color: rgba(255, 255, 255, 0.6);
-      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px var(--primary-light);
     }
     .distance-buttons {
       display: flex;
       gap: 4px;
       flex-wrap: nowrap;
+      align-items: center;
     }
     .distance-btn {
-      padding: 8px 10px;
-      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 6px 8px;
+      border: 1px solid var(--border-color);
       border-radius: 6px;
-      background: rgba(255, 255, 255, 0.1);
-      color: white;
+      background: var(--surface-color);
+      color: var(--text-secondary);
       font-size: 0.6875rem;
       font-weight: 500;
       cursor: pointer;
@@ -240,66 +198,22 @@ import { Customer } from '../../models/customer.model';
       white-space: nowrap;
     }
     .distance-btn:hover {
-      background: rgba(255, 255, 255, 0.2);
+      border-color: var(--primary-color);
+      color: var(--primary-color);
     }
     .distance-btn.active {
-      background: white;
-      color: #667eea;
-      border-color: white;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      background: var(--primary-color);
+      color: white;
+      border-color: var(--primary-color);
     }
     .active-filters {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 10px;
-      padding-top: 10px;
-      border-top: 1px solid rgba(255, 255, 255, 0.2);
-    }
-    .filter-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 3px 8px;
-      background: rgba(255, 255, 255, 0.25);
-      border-radius: 12px;
-      font-size: 0.6875rem;
-      color: white;
-      font-weight: 500;
-    }
-    .filter-chip button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: none;
-      border: none;
-      padding: 0;
-      color: white;
-      cursor: pointer;
-      opacity: 0.8;
-      transition: opacity 0.2s;
-    }
-    .filter-chip button:hover {
-      opacity: 1;
+      display: none;
     }
     .results-count {
       display: none;
     }
     .clear-btn {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      padding: 4px 8px;
-      background: rgba(255, 255, 255, 0.2);
-      border: none;
-      border-radius: 6px;
-      color: white;
-      font-size: 0.6875rem;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .clear-btn:hover {
-      background: rgba(255, 255, 255, 0.3);
+      display: none;
     }
   `]
 })

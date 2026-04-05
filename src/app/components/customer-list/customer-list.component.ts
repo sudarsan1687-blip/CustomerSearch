@@ -224,8 +224,27 @@ import { Customer } from '../../models/customer.model';
 
     .list-container {
       flex: 1;
-      overflow-y: auto;
+      overflow-y: scroll;
       padding: 12px;
+    }
+
+    /* Custom scrollbar styling */
+    .list-container::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .list-container::-webkit-scrollbar-track {
+      background: var(--bg-color);
+      border-radius: 4px;
+    }
+
+    .list-container::-webkit-scrollbar-thumb {
+      background: var(--primary-color);
+      border-radius: 4px;
+    }
+
+    .list-container::-webkit-scrollbar-thumb:hover {
+      background: #5560d4;
     }
 
     .customer-card {

@@ -33,6 +33,15 @@ import { environment } from '../../../environments/environment';
               <span class="subtitle">Visual Customer Analytics</span>
             </div>
           </div>
+          <!-- Filter Panel in Header -->
+          @if (config()) {
+            <div class="header-filters">
+              <app-filter-panel
+                [customers]="customers()"
+                (filterChange)="onFilterChange($event)"
+              />
+            </div>
+          }
         </div>
         <div class="header-right">
           @if (config()) {
@@ -71,7 +80,7 @@ import { environment } from '../../../environments/environment';
         </div>
       </header>
 
-      <!-- Main Content - Updated Layout: Left=List, Center=Map with Filter Above, Right=Customer Details -->
+      <!-- Main Content - Updated Layout: Left=List, Center=Map, Right=Customer Details -->
       <div class="main-layout">
         <!-- Left: Customer List Only -->
         <div class="list-section">
@@ -82,14 +91,8 @@ import { environment } from '../../../environments/environment';
           />
         </div>
 
-        <!-- Center: Filter Above Map -->
-        <div class="center-section">
-          <div class="filter-above-map">
-            <app-filter-panel
-              [customers]="customers()"
-              (filterChange)="onFilterChange($event)"
-            />
-          </div>
+        <!-- Center: Map -->
+        <div class="map-section">
           <div class="map-wrapper">
             <div #map class="map"></div>
           </div>
@@ -161,7 +164,8 @@ import { environment } from '../../../environments/environment';
     .header-left {
       display: flex;
       align-items: center;
-      gap: 24px;
+      gap: 16px;
+      flex: 1;
     }
 
     .logo {
@@ -194,6 +198,21 @@ import { environment } from '../../../environments/environment';
       font-size: 0.75rem;
       color: var(--text-muted);
       font-weight: 500;
+    }
+
+    /* Header Filters */
+    .header-filters {
+      margin-left: 24px;
+      flex: 1;
+      max-width: 500px;
+    }
+
+    .header-filters :host {
+      display: block;
+    }
+
+    .header-filters app-filter-panel {
+      margin: 0;
     }
 
     .header-right {
@@ -288,7 +307,7 @@ import { environment } from '../../../environments/environment';
       color: var(--text-primary);
     }
 
-    /* Main Layout - 3 Columns: Left=List, Center=Map with Filter Above, Right=Customer Details */
+    /* Main Layout - 3 Columns: Left=List, Center=Map, Right=Customer Details */
     .main-layout {
       display: flex;
       flex: 1;
@@ -307,24 +326,19 @@ import { environment } from '../../../environments/environment';
       flex-direction: column;
     }
 
-    /* Center: Filter Above Map */
-    .center-section {
+    /* Center: Map Section */
+    .map-section {
       flex: 1;
       min-width: 400px;
-      display: flex;
-      flex-direction: column;
-      background: var(--surface-color);
-    }
-
-    .filter-above-map {
-      flex-shrink: 0;
-      background: var(--surface-color);
-      border-bottom: 1px solid var(--border-color);
+      position: relative;
     }
 
     .map-wrapper {
-      flex: 1;
-      position: relative;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
     }
 
     .map {
@@ -432,11 +446,15 @@ import { environment } from '../../../environments/environment';
     }
 
     @media (max-width: 1200px) {
+      .header-filters {
+        display: none;
+      }
       .main-layout {
         flex-direction: column;
       }
-      .center-section {
+      .map-section {
         min-width: auto;
+        height: 50%;
       }
       .detail-section {
         width: 100%;

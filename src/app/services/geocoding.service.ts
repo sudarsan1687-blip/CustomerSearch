@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of, delay, concatMap, from } from 'rxjs';
+import { Observable, of, delay, concatMap, from, merge } from 'rxjs';
 import { Customer } from '../models/customer.model';
 import { CacheService } from './cache.service';
 import { map, catchError } from 'rxjs/operators';
@@ -193,34 +193,43 @@ export class GeocodingService {
   }
 
   geocodeCustomers(customers: Customer[]): Observable<Customer> {
-    return from(customers).pipe(
-      concatMap(customer => {
-        if (!customer.address) {
-          return of({ ...customer, geocodeStatus: 'failed' as const });
+    // Separate cached and non-cached customers
+    const cached: Customer[] = [];
+    const toGeocode: Customer[] = [];
+
+    customers.forEach(customer => {
+      if (!customer.address) {
+        cached.push({ ...customer, geocodeStatus: 'failed' as const });
+        return;
+      }
+
+      const cacheKey = `${customer.address}, ${customer.country}`;
+      const cache = this.cacheService.getGeocodeCache();
+
+      if (cache[cacheKey]) {
+        const cachedCoords = cache[cacheKey];
+        if (cachedCoords) {
+          cached.push({
+            ...customer,
+            lat: cachedCoords.lat,
+            lng: cachedCoords.lng,
+            geocodeStatus: 'success' as const
+          });
+        } else {
+          cached.push({ ...customer, geocodeStatus: 'failed' as const });
         }
+      } else {
+        toGeocode.push(customer);
+      }
+    });
 
-        // Check cache first and return immediately if available
-        const cacheKey = `${customer.address}, ${customer.country}`;
-        const cache = this.cacheService.getGeocodeCache();
+    // Emit cached results immediately (no delay)
+    const cached$ = from(cached);
 
-        if (cache[cacheKey]) {
-          // Return cached result immediately - no delay
-          const cachedCoords = cache[cacheKey];
-          if (cachedCoords) {
-            return of({
-              ...customer,
-              lat: cachedCoords.lat,
-              lng: cachedCoords.lng,
-              geocodeStatus: 'success' as const
-            });
-          } else {
-            // Cached failure
-            return of({ ...customer, geocodeStatus: 'failed' as const });
-          }
-        }
-
-        // Not in cache - perform actual geocoding with delay
-        return this.geocodeAddress(customer.address, customer.country).pipe(
+    // Process non-cached with delay
+    const geocode$ = from(toGeocode).pipe(
+      concatMap(customer =>
+        this.geocodeAddress(customer.address, customer.country).pipe(
           delay(this.REQUEST_DELAY),
           map(coords => {
             if (coords) {
@@ -233,8 +242,11 @@ export class GeocodingService {
             }
             return { ...customer, geocodeStatus: 'failed' as const };
           })
-        );
-      })
+        )
+      )
     );
+
+    // Emit cached first, then geocoded results
+    return merge(cached$, geocode$);
   }
 }
