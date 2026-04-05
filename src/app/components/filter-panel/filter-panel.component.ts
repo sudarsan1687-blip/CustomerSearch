@@ -11,7 +11,7 @@ import { Customer } from '../../models/customer.model';
     <div class="filter-panel">
       <div class="filter-header">
         <h3>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
           </svg>
           Filters
@@ -22,7 +22,7 @@ import { Customer } from '../../models/customer.model';
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
-            Clear all
+            Clear
           </button>
         }
       </div>
@@ -150,22 +150,22 @@ import { Customer } from '../../models/customer.model';
   styles: [`
     .filter-panel {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      padding: 16px;
-      border-radius: 12px;
-      margin: 12px;
-      box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
+      padding: 10px 16px;
+      border-radius: 0;
+      margin: 0;
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.2);
     }
     .filter-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
+      margin-bottom: 10px;
     }
     .filter-header h3 {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 0.9375rem;
+      gap: 6px;
+      font-size: 0.75rem;
       font-weight: 600;
       color: white;
       margin: 0;
@@ -173,37 +173,24 @@ import { Customer } from '../../models/customer.model';
     .filter-header svg {
       color: rgba(255, 255, 255, 0.9);
     }
-    .clear-btn {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      padding: 4px 8px;
-      background: rgba(255, 255, 255, 0.2);
-      border: none;
-      border-radius: 6px;
-      color: white;
-      font-size: 0.75rem;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .clear-btn:hover {
-      background: rgba(255, 255, 255, 0.3);
-    }
     .filter-body {
       display: flex;
-      flex-direction: column;
-      gap: 14px;
+      flex-direction: row;
+      gap: 16px;
+      align-items: flex-end;
     }
     .filter-group {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 4px;
+      flex: 1;
+      min-width: 120px;
     }
     .filter-label {
       display: flex;
       align-items: center;
       gap: 6px;
-      font-size: 0.75rem;
+      font-size: 0.6875rem;
       font-weight: 600;
       color: rgba(255, 255, 255, 0.9);
       text-transform: uppercase;
@@ -213,12 +200,12 @@ import { Customer } from '../../models/customer.model';
       color: rgba(255, 255, 255, 0.7);
     }
     .filter-select {
-      padding: 10px 12px;
+      padding: 8px 12px;
       border: 1px solid rgba(255, 255, 255, 0.3);
       border-radius: 8px;
       background: rgba(255, 255, 255, 0.15);
       color: white;
-      font-size: 0.875rem;
+      font-size: 0.8125rem;
       cursor: pointer;
       transition: all 0.2s;
       backdrop-filter: blur(10px);
@@ -236,12 +223,12 @@ import { Customer } from '../../models/customer.model';
       box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
     }
     .distance-buttons {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
+      display: flex;
+      gap: 4px;
+      flex-wrap: nowrap;
     }
     .distance-btn {
-      padding: 8px 4px;
+      padding: 8px 10px;
       border: 1px solid rgba(255, 255, 255, 0.3);
       border-radius: 6px;
       background: rgba(255, 255, 255, 0.1);
@@ -250,6 +237,7 @@ import { Customer } from '../../models/customer.model';
       font-weight: 500;
       cursor: pointer;
       transition: all 0.2s;
+      white-space: nowrap;
     }
     .distance-btn:hover {
       background: rgba(255, 255, 255, 0.2);
@@ -264,18 +252,18 @@ import { Customer } from '../../models/customer.model';
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      margin-top: 14px;
-      padding-top: 14px;
+      margin-top: 10px;
+      padding-top: 10px;
       border-top: 1px solid rgba(255, 255, 255, 0.2);
     }
     .filter-chip {
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      padding: 4px 10px;
+      padding: 3px 8px;
       background: rgba(255, 255, 255, 0.25);
-      border-radius: 20px;
-      font-size: 0.75rem;
+      border-radius: 12px;
+      font-size: 0.6875rem;
       color: white;
       font-weight: 500;
     }
@@ -295,16 +283,23 @@ import { Customer } from '../../models/customer.model';
       opacity: 1;
     }
     .results-count {
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px solid rgba(255, 255, 255, 0.2);
-      font-size: 0.75rem;
-      color: rgba(255, 255, 255, 0.8);
-      text-align: center;
+      display: none;
     }
-    .results-count strong {
+    .clear-btn {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      border-radius: 6px;
       color: white;
-      font-weight: 600;
+      font-size: 0.6875rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .clear-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
     }
   `]
 })

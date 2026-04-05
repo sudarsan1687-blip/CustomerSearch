@@ -153,6 +153,7 @@ import { Customer } from '../../models/customer.model';
       height: 100%;
       background: var(--surface-color);
       overflow: hidden;
+      max-height: 100%;
     }
 
     /* Header with gradient background */

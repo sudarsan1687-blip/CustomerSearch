@@ -71,7 +71,7 @@ import { environment } from '../../../environments/environment';
         </div>
       </header>
 
-      <!-- Main Content - 3 Column Layout: Left=List, Center=Map, Right=Filters+Detail -->
+      <!-- Main Content - Updated Layout: Left=List, Center=Map with Filter Above, Right=Customer Details -->
       <div class="main-layout">
         <!-- Left: Customer List Only -->
         <div class="list-section">
@@ -82,40 +82,38 @@ import { environment } from '../../../environments/environment';
           />
         </div>
 
-        <!-- Center: Map -->
-        <div class="map-section">
-          <div class="map-wrapper">
-            <div #map class="map"></div>
-          </div>
-        </div>
-
-        <!-- Right: Filters + Customer Details -->
-        <div class="right-panel">
-          <div class="filter-container">
+        <!-- Center: Filter Above Map -->
+        <div class="center-section">
+          <div class="filter-above-map">
             <app-filter-panel
               [customers]="customers()"
               (filterChange)="onFilterChange($event)"
             />
           </div>
-          <div class="detail-container">
-            @if (selectedCustomer()) {
-              <app-customer-detail
-                [customer]="selectedCustomer()!"
-                (close)="selectedCustomer.set(null)"
-              />
-            } @else {
-              <div class="empty-state">
-                <div class="empty-icon">
-                  <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                  </svg>
-                </div>
-                <h3>Select a Customer</h3>
-                <p>Click on a customer from the list or map to view their details</p>
-              </div>
-            }
+          <div class="map-wrapper">
+            <div #map class="map"></div>
           </div>
+        </div>
+
+        <!-- Right: Customer Details Only -->
+        <div class="detail-section">
+          @if (selectedCustomer()) {
+            <app-customer-detail
+              [customer]="selectedCustomer()!"
+              (close)="selectedCustomer.set(null)"
+            />
+          } @else {
+            <div class="empty-state">
+              <div class="empty-icon">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </div>
+              <h3>Select a Customer</h3>
+              <p>Click on a customer from the list or map to view their details</p>
+            </div>
+          }
         </div>
       </div>
 
@@ -290,7 +288,7 @@ import { environment } from '../../../environments/environment';
       color: var(--text-primary);
     }
 
-    /* Main Layout - 3 Columns: Left=List, Center=Map, Right=Filters+Detail */
+    /* Main Layout - 3 Columns: Left=List, Center=Map with Filter Above, Right=Customer Details */
     .main-layout {
       display: flex;
       flex: 1;
@@ -309,19 +307,24 @@ import { environment } from '../../../environments/environment';
       flex-direction: column;
     }
 
-    /* Center: Map Section */
-    .map-section {
+    /* Center: Filter Above Map */
+    .center-section {
       flex: 1;
       min-width: 400px;
-      position: relative;
+      display: flex;
+      flex-direction: column;
+      background: var(--surface-color);
+    }
+
+    .filter-above-map {
+      flex-shrink: 0;
+      background: var(--surface-color);
+      border-bottom: 1px solid var(--border-color);
     }
 
     .map-wrapper {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      flex: 1;
+      position: relative;
     }
 
     .map {
@@ -330,27 +333,14 @@ import { environment } from '../../../environments/environment';
       background: linear-gradient(135deg, #aadaff 0%, #d4f1f4 100%);
     }
 
-    /* Right Panel: Filters + Details */
-    .right-panel {
+    /* Right Panel: Customer Details Only */
+    .detail-section {
       width: 420px;
-      background: var(--bg-color);
+      background: var(--surface-color);
       border-left: 1px solid var(--border-color);
       overflow: hidden;
       display: flex;
       flex-direction: column;
-    }
-
-    .filter-container {
-      flex-shrink: 0;
-      padding: 12px;
-      background: var(--bg-color);
-    }
-
-    .detail-container {
-      flex: 1;
-      overflow-y: auto;
-      background: var(--surface-color);
-      border-top: 1px solid var(--border-color);
     }
 
     .empty-state {
@@ -387,14 +377,6 @@ import { environment } from '../../../environments/environment';
       font-size: 0.875rem;
       color: var(--text-muted);
       max-width: 280px;
-    }
-
-    .list-section {
-      width: 420px;
-      background: var(--bg-color);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
     }
 
     /* Loading Overlay */
@@ -453,19 +435,20 @@ import { environment } from '../../../environments/environment';
       .main-layout {
         flex-direction: column;
       }
-      .map-section {
+      .center-section {
         min-width: auto;
-        height: 50%;
       }
       .detail-section {
         width: 100%;
-        height: 25%;
+        height: 40%;
         border: none;
         border-top: 1px solid var(--border-color);
       }
       .list-section {
         width: 100%;
-        height: 25%;
+        height: 30%;
+        border: none;
+        border-bottom: 1px solid var(--border-color);
       }
     }
   `]

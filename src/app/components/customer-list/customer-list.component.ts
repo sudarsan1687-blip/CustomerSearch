@@ -114,6 +114,7 @@ import { Customer } from '../../models/customer.model';
       flex-direction: column;
       height: 100%;
       background: var(--surface-color);
+      overflow: hidden;
     }
 
     .list-header {

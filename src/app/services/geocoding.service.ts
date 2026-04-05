@@ -199,6 +199,27 @@ export class GeocodingService {
           return of({ ...customer, geocodeStatus: 'failed' as const });
         }
 
+        // Check cache first and return immediately if available
+        const cacheKey = `${customer.address}, ${customer.country}`;
+        const cache = this.cacheService.getGeocodeCache();
+
+        if (cache[cacheKey]) {
+          // Return cached result immediately - no delay
+          const cachedCoords = cache[cacheKey];
+          if (cachedCoords) {
+            return of({
+              ...customer,
+              lat: cachedCoords.lat,
+              lng: cachedCoords.lng,
+              geocodeStatus: 'success' as const
+            });
+          } else {
+            // Cached failure
+            return of({ ...customer, geocodeStatus: 'failed' as const });
+          }
+        }
+
+        // Not in cache - perform actual geocoding with delay
         return this.geocodeAddress(customer.address, customer.country).pipe(
           delay(this.REQUEST_DELAY),
           map(coords => {
