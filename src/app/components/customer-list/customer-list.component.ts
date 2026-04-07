@@ -114,7 +114,14 @@ import { Customer } from '../../models/customer.model';
       flex-direction: column;
       height: 100%;
       background: var(--surface-color);
-      overflow: hidden;
+    }
+
+    .list-header {
+      padding: 16px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-bottom: 1px solid var(--border-color);
+      flex-shrink: 0;
+      max-height: 120px;
     }
 
     .list-header {

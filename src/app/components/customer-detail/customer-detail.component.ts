@@ -152,8 +152,14 @@ import { Customer } from '../../models/customer.model';
       flex-direction: column;
       height: 100%;
       background: var(--surface-color);
-      overflow: hidden;
-      max-height: 100%;
+    }
+
+    .detail-header {
+      background: var(--primary-gradient);
+      padding: 20px;
+      position: relative;
+      flex-shrink: 0;
+      max-height: 140px;
     }
 
     /* Header with gradient background */
@@ -269,9 +275,28 @@ import { Customer } from '../../models/customer.model';
     /* Body */
     .detail-body {
       flex: 1;
-      overflow-y: auto;
+      overflow-y: scroll;
       padding: 0;
       background: var(--bg-color);
+    }
+
+    /* Custom scrollbar styling */
+    .detail-body::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .detail-body::-webkit-scrollbar-track {
+      background: var(--bg-color);
+      border-radius: 4px;
+    }
+
+    .detail-body::-webkit-scrollbar-thumb {
+      background: var(--primary-color);
+      border-radius: 4px;
+    }
+
+    .detail-body::-webkit-scrollbar-thumb:hover {
+      background: #5560d4;
     }
 
     .section {
