@@ -321,9 +321,9 @@ import { environment } from '../../../environments/environment';
       width: 400px;
       background: var(--surface-color);
       border-right: 1px solid var(--border-color);
-      overflow: hidden;
       display: flex;
       flex-direction: column;
+      min-height: 0;
     }
 
     /* Center: Map Section */
@@ -515,6 +515,7 @@ export class MapViewComponent {
   private map: L.Map | null = null;
   private markers: Map<string, L.CircleMarker> = new Map();
   private markersLayer: L.LayerGroup | null = null;
+  private allCustomers: Customer[] = [];
   private geoSub?: Subscription;
 
   constructor() {
@@ -571,6 +572,30 @@ export class MapViewComponent {
     this.filterCategory.set(filters.category);
     this.filterCountry.set(filters.country);
     this.filterDistance.set(filters.distance);
+
+    // Update map to show only filtered customers
+    this.updateMapForFilteredCustomers();
+  }
+
+  private updateMapForFilteredCustomers() {
+    if (!this.map || !this.markersLayer) return;
+
+    const filtered = this.filteredCustomers();
+
+    // Clear all markers and re-add only filtered ones
+    this.clearMarkers();
+
+    // Add markers only for filtered customers that have coordinates
+    filtered.forEach(customer => {
+      if (customer.geocodeStatus === 'success' && customer.lat && customer.lng) {
+        this.addMarker(customer);
+      }
+    });
+
+    // Fit bounds to visible markers
+    if (filtered.length > 0 && this.markers.size > 0) {
+      this.fitBoundsToMarkers();
+    }
   }
 
   onConfigSave(newConfig: GoogleSheetConfig) {
