@@ -10,7 +10,7 @@ import { CustomerDetailComponent } from '../customer-detail/customer-detail.comp
 import { ConfigModalComponent } from '../config-modal/config-modal.component';
 import { FilterPanelComponent } from '../filter-panel/filter-panel.component';
 import { Subscription } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { environment, isValidConfig } from '../../../environments/environment';
 
 @Component({
   selector: 'app-map-view',
@@ -520,10 +520,10 @@ export class MapViewComponent {
 
   constructor() {
     const savedConfig = this.cacheService.getConfig();
-    if (savedConfig) {
+    if (savedConfig && isValidConfig(savedConfig)) {
       this.config.set(savedConfig);
       this.loadData();
-    } else if (environment.googleSheetConfig.sheetId && environment.googleSheetConfig.apiKey) {
+    } else if (isValidConfig(environment.googleSheetConfig)) {
       this.config.set(environment.googleSheetConfig);
       this.cacheService.setConfig(environment.googleSheetConfig);
       this.loadData();
@@ -609,6 +609,13 @@ export class MapViewComponent {
     const cfg = this.config();
     if (!cfg) return;
 
+    // Validate config before fetching
+    if (!cfg.sheetId || !cfg.apiKey) {
+      alert('Missing Google Sheet ID or API Key. Please configure them in Settings.');
+      this.showConfig.set(true);
+      return;
+    }
+
     this.loading.set(true);
     this.customers.set([]);
     this.clearMarkers();
@@ -621,7 +628,19 @@ export class MapViewComponent {
       },
       error: (err) => {
         console.error('Failed to fetch data:', err);
-        alert('Failed to fetch data. Please check your configuration.');
+        let errorMessage = 'Failed to fetch data. ';
+
+        if (err.status === 403) {
+          errorMessage += 'API Key is invalid or has insufficient permissions.';
+        } else if (err.status === 404) {
+          errorMessage += 'Google Sheet not found. Please check the Sheet ID.';
+        } else if (err.status === 0) {
+          errorMessage += 'Network error or CORS issue.';
+        } else {
+          errorMessage += 'Please check your configuration.';
+        }
+
+        alert(errorMessage);
         this.loading.set(false);
         this.showConfig.set(true);
       }
