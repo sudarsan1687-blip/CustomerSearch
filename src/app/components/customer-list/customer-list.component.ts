@@ -241,17 +241,17 @@ import { Customer } from '../../models/customer.model';
     }
 
     .list-container::-webkit-scrollbar-track {
-      background: var(--bg-color);
+      background: #f1f5f9;
       border-radius: 4px;
     }
 
     .list-container::-webkit-scrollbar-thumb {
-      background: var(--primary-color);
+      background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
       border-radius: 4px;
     }
 
     .list-container::-webkit-scrollbar-thumb:hover {
-      background: #5560d4;
+      background: linear-gradient(180deg, #5a67d8 0%, #6b4691 100%);
     }
 
     .customer-card {

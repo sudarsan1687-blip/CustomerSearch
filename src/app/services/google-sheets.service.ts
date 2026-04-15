@@ -10,7 +10,7 @@ export class GoogleSheetsService {
   private http = inject(HttpClient);
 
   fetchCustomers(config: GoogleSheetConfig): Observable<Customer[]> {
-    const { sheetId, apiKey, range = 'Merged Contacts!A:G' } = config;
+    const { sheetId, apiKey, range = 'Merged Contacts!A:J' } = config;
 
     if (!sheetId || !apiKey) {
       return throwError(() => new Error('Sheet ID and API Key are required'));
@@ -54,8 +54,10 @@ export class GoogleSheetsService {
       country: row[2] || '',
       address: row[3] || '',
       contact: row[4] || '',
-      website: row[5] || '',
-      buyer: row[6] || '',
+      email: row[5] || '',
+      website: row[6] || '',
+      buyer: row[7] || '',
+      notes: row[8] || '',
       geocodeStatus: 'pending'
     }));
   }

@@ -96,6 +96,14 @@ import { Customer } from '../../models/customer.model';
               <span class="label">Phone</span>
               <span class="value">{{ customer().contact || 'N/A' }}</span>
             </div>
+            @if (customer().email) {
+              <div class="info-row">
+                <span class="label">Email</span>
+                <a [href]="'mailto:' + customer().email" class="value link">
+                  {{ customer().email }}
+                </a>
+              </div>
+            }
             @if (customer().website) {
               <div class="info-row">
                 <span class="label">Website</span>
@@ -125,6 +133,27 @@ import { Customer } from '../../models/customer.model';
             <div class="section-content">
               <div class="info-row">
                 <span class="value highlight">{{ customer().buyer }}</span>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Notes Section -->
+        @if (customer().notes) {
+          <div class="section">
+            <div class="section-header">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+              <span>Notes</span>
+            </div>
+            <div class="section-content">
+              <div class="info-row">
+                <span class="value notes-text">{{ customer().notes }}</span>
               </div>
             </div>
           </div>
@@ -286,17 +315,17 @@ import { Customer } from '../../models/customer.model';
     }
 
     .detail-body::-webkit-scrollbar-track {
-      background: var(--bg-color);
+      background: #f1f5f9;
       border-radius: 4px;
     }
 
     .detail-body::-webkit-scrollbar-thumb {
-      background: var(--primary-color);
+      background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
       border-radius: 4px;
     }
 
     .detail-body::-webkit-scrollbar-thumb:hover {
-      background: #5560d4;
+      background: linear-gradient(180deg, #5a67d8 0%, #6b4691 100%);
     }
 
     .section {
@@ -394,6 +423,16 @@ import { Customer } from '../../models/customer.model';
 
     .value.link:hover {
       text-decoration: underline;
+    }
+
+    .value.notes-text {
+      white-space: pre-wrap;
+      word-break: break-word;
+      background: var(--bg-color);
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      line-height: 1.7;
     }
 
     /* Footer */

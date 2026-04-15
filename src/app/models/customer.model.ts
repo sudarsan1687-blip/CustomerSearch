@@ -5,8 +5,10 @@ export interface Customer {
   country: string;
   address: string;
   contact: string;
+  email: string;
   website: string;
   buyer: string;
+  notes: string;
   lat?: number;
   lng?: number;
   geocodeStatus: 'pending' | 'success' | 'failed';
