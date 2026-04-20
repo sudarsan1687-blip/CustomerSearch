@@ -323,7 +323,9 @@ import { environment, isValidConfig } from '../../../environments/environment';
       border-right: 1px solid var(--border-color);
       display: flex;
       flex-direction: column;
+      height: 100%;
       min-height: 0;
+      overflow: hidden;
     }
 
     /* Center: Map Section */
@@ -352,9 +354,11 @@ import { environment, isValidConfig } from '../../../environments/environment';
       width: 420px;
       background: var(--surface-color);
       border-left: 1px solid var(--border-color);
-      overflow: hidden;
       display: flex;
       flex-direction: column;
+      height: 100%;
+      min-height: 0;
+      overflow: hidden;
     }
 
     .empty-state {
@@ -391,6 +395,35 @@ import { environment, isValidConfig } from '../../../environments/environment';
       font-size: 0.875rem;
       color: var(--text-muted);
       max-width: 280px;
+    }
+
+    /* Scrollbar for list and detail sections */
+    .list-section ::ng-deep .list-container::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .list-section ::ng-deep .list-container::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 4px;
+    }
+
+    .list-section ::ng-deep .list-container::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+      border-radius: 4px;
+    }
+
+    .detail-section ::ng-deep .detail-body::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .detail-section ::ng-deep .detail-body::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 4px;
+    }
+
+    .detail-section ::ng-deep .detail-body::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+      border-radius: 4px;
     }
 
     /* Loading Overlay */
